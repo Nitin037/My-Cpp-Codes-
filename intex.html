@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LocalMart – Full Stack Setup Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:#f7f5f0;color:#1a1a1a;line-height:1.7;}
+:root{
+  --orange:#d4622a;--orange-light:#f0e0d4;--orange-dark:#a84c1e;
+  --green:#2a7d4f;--green-light:#d4ead9;
+  --blue:#1a5fa8;--blue-light:#ddeaf8;
+  --purple:#5b3fbe;--purple-light:#ede9fc;
+  --border:#e0d9ce;--muted:#6b6b6b;--white:#fff;--cream:#f7f5f0;
+}
+a{color:var(--blue);text-decoration:none;}
+a:hover{text-decoration:underline;}
+
+/* HEADER */
+header{background:var(--white);border-bottom:1.5px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100;}
+.logo{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--orange);font-weight:700;}
+.logo span{color:#1a1a1a;}
+.header-badge{font-size:0.75rem;background:var(--orange-light);color:var(--orange-dark);padding:4px 12px;border-radius:20px;font-weight:500;}
+
+/* HERO */
+.hero{background:#2a1a0e;color:#fff;padding:3rem 2rem;text-align:center;}
+.hero h1{font-family:'Playfair Display',serif;font-size:2.2rem;margin-bottom:0.75rem;}
+.hero p{opacity:0.75;font-size:1rem;max-width:600px;margin:0 auto;}
+
+/* PROGRESS NAV */
+.progress-nav{background:var(--white);border-bottom:1.5px solid var(--border);padding:1rem 2rem;display:flex;gap:0.5rem;overflow-x:auto;}
+.step-pill{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:20px;cursor:pointer;font-size:0.85rem;font-weight:500;white-space:nowrap;border:1.5px solid var(--border);background:var(--white);transition:all 0.2s;}
+.step-pill:hover{border-color:var(--orange);color:var(--orange);}
+.step-pill.active{background:var(--orange);color:white;border-color:var(--orange);}
+.step-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;background:rgba(255,255,255,0.25);}
+.step-pill:not(.active) .step-num{background:var(--orange-light);color:var(--orange);}
+
+/* MAIN LAYOUT */
+main{max-width:900px;margin:0 auto;padding:2.5rem 1.5rem;}
+
+/* SECTION CARDS */
+.section-card{background:var(--white);border:1.5px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:2rem;}
+.section-card h2{font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:0.4rem;display:flex;align-items:center;gap:0.6rem;}
+.section-card .subtitle{color:var(--muted);font-size:0.9rem;margin-bottom:1.5rem;}
+
+/* STEP BLOCKS */
+.steps{counter-reset:step;}
+.step-block{display:flex;gap:1.25rem;margin-bottom:1.5rem;align-items:flex-start;}
+.step-circle{min-width:32px;height:32px;border-radius:50%;background:var(--orange);color:white;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;margin-top:2px;}
+.step-content h4{font-size:0.95rem;font-weight:500;margin-bottom:4px;}
+.step-content p{font-size:0.875rem;color:var(--muted);margin-bottom:8px;}
+
+/* CODE BLOCKS */
+.code-block{background:#1e1e2e;border-radius:10px;padding:1.25rem;margin:0.75rem 0;overflow-x:auto;position:relative;}
+.code-block pre{font-family:'DM Mono',monospace;font-size:0.82rem;line-height:1.7;color:#cdd6f4;}
+.code-label{position:absolute;top:10px;right:14px;font-size:0.72rem;background:rgba(255,255,255,0.12);color:#a6adc8;padding:2px 10px;border-radius:6px;font-family:'DM Mono',monospace;}
+.kw{color:#cba6f7;}
+.fn{color:#89dceb;}
+.str{color:#a6e3a1;}
+.cm{color:#585b70;}
+.num{color:#fab387;}
+.var{color:#89b4fa;}
+
+/* TAGS */
+.tag{display:inline-block;font-size:0.75rem;font-weight:500;padding:3px 10px;border-radius:12px;margin-right:4px;margin-bottom:4px;}
+.tag-free{background:var(--green-light);color:var(--green);}
+.tag-paid{background:var(--orange-light);color:var(--orange-dark);}
+.tag-required{background:#fef3cd;color:#856404;}
+.tag-optional{background:var(--blue-light);color:var(--blue);}
+
+/* INFO BOX */
+.info-box{border-radius:10px;padding:1rem 1.25rem;margin:1rem 0;font-size:0.875rem;border-left:3px solid;}
+.info-box.tip{background:var(--blue-light);border-color:var(--blue);color:#0f3d6e;}
+.info-box.warn{background:#fff8e6;border-color:#e6a817;color:#6b4c00;}
+.info-box.success{background:var(--green-light);border-color:var(--green);color:#1a4d31;}
+.info-box strong{display:block;margin-bottom:4px;font-weight:500;}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+.mini-card{background:var(--cream);border:1.5px solid var(--border);border-radius:12px;padding:1rem;}
+.mini-card h5{font-size:0.85rem;font-weight:500;margin-bottom:4px;}
+.mini-card p{font-size:0.8rem;color:var(--muted);}
+.mini-card .icon{font-size:1.4rem;margin-bottom:6px;}
+
+/* FLOW CHART */
+.flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:1rem 0;}
+.flow-box{background:var(--cream);border:1.5px solid var(--border);border-radius:8px;padding:8px 14px;font-size:0.8rem;font-weight:500;text-align:center;}
+.flow-arr{color:var(--muted);font-size:0.9rem;padding:0 6px;}
+.flow-box.highlight{background:var(--orange-light);border-color:var(--orange);color:var(--orange-dark);}
+
+/* COST TABLE */
+table{width:100%;border-collapse:collapse;font-size:0.875rem;margin:1rem 0;}
+th{text-align:left;padding:8px 12px;background:var(--cream);font-weight:500;border-bottom:1.5px solid var(--border);}
+td{padding:8px 12px;border-bottom:1px solid var(--border);}
+td:last-child{text-align:right;}
+
+/* FOOTER */
+footer{text-align:center;padding:2rem;color:var(--muted);font-size:0.85rem;border-top:1px solid var(--border);margin-top:2rem;}
+
+@media(max-width:600px){.grid-2{grid-template-columns:1fr;}.flow{flex-direction:column;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Local<span>Mart</span></div>
+  <div class="header-badge">Full Stack Implementation Guide</div>
+</header>
+
+<div class="hero">
+  <h1>Build the Complete LocalMart Platform</h1>
+  <p>Step-by-step code &amp; setup for Firebase database, login system, Razorpay payments, and WhatsApp order alerts.</p>
+</div>
+
+<div class="progress-nav">
+  <div class="step-pill active"><div class="step-num">1</div>Firebase Database</div>
+  <div class="step-pill"><div class="step-num">2</div>Login System</div>
+  <div class="step-pill"><div class="step-num">3</div>Razorpay Payments</div>
+  <div class="step-pill"><div class="step-num">4</div>WhatsApp Alerts</div>
+  <div class="step-pill"><div class="step-num">5</div>Deploy Live</div>
+</div>
+
+<main>
+
+<!-- ───────────────────────── SECTION 1: FIREBASE ───────────────────────── -->
+<div class="section-card">
+  <h2>🔥 Step 1 — Firebase Database</h2>
+  <div class="subtitle">Store all shop listings and customer orders in Firebase Firestore (free tier is enough to start)</div>
+
+  <div class="info-box tip"><strong>What is Firebase?</strong>Google's free cloud database. No server needed — works directly from your website. Free up to 50,000 reads/day.</div>
+
+  <div class="steps">
+    <div class="step-block">
+      <div class="step-circle">1</div>
+      <div class="step-content">
+        <h4>Create a Firebase project</h4>
+        <p>Go to <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a> → "Add project" → name it <em>localmart</em> → continue. Then go to <strong>Firestore Database</strong> → "Create database" → Start in <em>test mode</em>.</p>
+      </div>
+    </div>
+    <div class="step-block">
+      <div class="step-circle">2</div>
+      <div class="step-content">
+        <h4>Get your config keys</h4>
+        <p>In Firebase → Project Settings → scroll to "Your apps" → click Web (&lt;/&gt;) → register app → copy the config object shown.</p>
+      </div>
+    </div>
+    <div class="step-block">
+      <div class="step-circle">3</div>
+      <div class="step-content">
+        <h4>Add Firebase to your website</h4>
+        <p>Paste this in your HTML file, replacing the config values with yours:</p>
+        <div class="code-block">
+          <div class="code-label">HTML — paste in &lt;head&gt;</div>
+          <pre><span class="cm">&lt;!-- Firebase SDK --&gt;</span>
+<span class="kw">&lt;script</span> <span class="var">type</span>=<span class="str">"module"</span><span class="kw">&gt;</span>
+  <span class="kw">import</span> { initializeApp } <span class="kw">from</span> <span class="str">"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"</span>;
+  <span class="kw">import</span> { getFirestore, collection, addDoc,
+           getDocs, query, where, orderBy }
+    <span class="kw">from</span> <span class="str">"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"</span>;
+
+  <span class="cm">// ⬇ Replace with YOUR Firebase config</span>
+  <span class="kw">const</span> <span class="var">firebaseConfig</span> = {
+    apiKey:            <span class="str">"AIzaSy_YOUR_KEY_HERE"</span>,
+    authDomain:        <span class="str">"localmart-xxxxx.firebaseapp.com"</span>,
+    projectId:         <span class="str">"localmart-xxxxx"</span>,
+    storageBucket:     <span class="str">"localmart-xxxxx.appspot.com"</span>,
+    messagingSenderId: <span class="str">"123456789"</span>,
+    appId:             <span class="str">"1:123:web:abc123"</span>
+  };
+
+  <span class="kw">const</span> <span class="var">app</span> = initializeApp(firebaseConfig);
+  <span class="kw">const</span> <span class="var">db</span>  = getFirestore(app);
+  window.db = db; <span class="cm">// make it global</span>
+<span class="kw">&lt;/script&gt;</span></pre>
+        </div>
+      </div>
+    </div>
+    <div class="step-block">
+      <div class="step-circle">4</div>
+      <div class="step-content">
+        <h4>Save a new shop to the database</h4>
+        <p>Replace your <code>registerShop()</code> function with this:</p>
+        <div class="code-block">
+          <div class="code-label">JavaScript</div>
+          <pre><span class="kw">import</span> { collection, addDoc, serverTimestamp }
+  <span class="kw">from</span> <span class="str">"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"</span>;
+
+<span class="kw">async function</span> <span class="fn">registerShop</span>() {
+  <span class="kw">const</span> <span class="var">name</span>  = document.getElementById(<span class="str">'r-name'</span>).value.trim();
+  <span class="kw">const</span> <span class="var">owner</span> = document.getElementById(<span class="str">'r-owner'</span>).value.trim();
+  <span class="kw">const</span> <span class="var">phone</span> = document.getElementById(<span class="str">'r-phone'</span>).value.trim();
+  <span class="kw">const</span> <span class="var">cat</span>   = document.getElementById(<span class="str">'r-cat'</span>).value;
+  <span class="kw">const</span> <span class="var">area</span>  = document.getElementById(<span class="str">'r-area'</span>).value;
+  <span class="kw">const</span> <span class="var">addr</span>  = document.getElementById(<span class="str">'r-addr'</span>).value.trim();
+
+  <span class="kw">if</span> (!name || !owner || !cat || !area) {
+    alert(<span class="str">'Please fill all required fields'</span>); <span class="kw">return</span>;
+  }
+
+  <span class="kw">try</span> {
+    <span class="kw">await</span> addDoc(collection(window.db, <span class="str">'shops'</span>), {
+      name, owner, phone, cat, area, addr,
+      rating:    <span class="num">0</span>,
+      approved:  <span class="kw">false</span>,   <span class="cm">// admin approves before it goes live</span>
+      createdAt: serverTimestamp()
+    });
+    alert(<span class="str">'✅ Shop registered! We will review and approve it shortly.'</span>);
+  } <span class="kw">catch</span> (err) {
+    alert(<span class="str">'Error: '</span> + err.message);
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+    <div class="step-block">
+      <div class="step-circle">5</div>
+      <div class="step-content">
+        <h4>Load shops from the database</h4>
+        <div class="code-block">
+          <div class="code-label">JavaScript</div>
+          <pre><span class="kw">import</span> { collection, getDocs, query, where }
+  <span class="kw">from</span> <span class="str">"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"</span>;
+
+<span class="kw">async function</span> <span class="fn">loadShops</span>() {
+  <span class="cm">// Only load approved shops</span>
+  <span class="kw">const</span> <span class="var">q</span> = query(
+    collection(window.db, <span class="str">'shops'</span>),
+    where(<span class="str">'approved'</span>, <span class="str">'=='</span>, <span class="kw">true</span>)
+  );
+  <span class="kw">const</span> <span class="var">snap</span> = <span class="kw">await</span> getDocs(q);
+  <span class="kw">const</span> <span class="var">shops</span> = snap.docs.map(<span class="var">d</span> =&gt; ({ id: d.id, ...d.data() }));
+  renderShops(shops); <span class="cm">// your existing render function</span>
+}
+
+<span class="cm">// Call on page load</span>
+window.addEventListener(<span class="str">'load'</span>, loadShops);</pre>
+        </div>
+      </div>
+    </div>
+    <div class="step-block">
+      <div class="step-circle">6</div>
+      <div class="step-content">
+        <h4>Save orders to the database</h4>
+        <div class="code-block">
+          <div class="code-label">JavaScript</div>
+          <pre><span class="kw">async function</span> <span class="fn">placeOrder</span>(shopId, shopName, cartItems, totalAmount, customerPhone) {
+  <span class="kw">const</span> <span class="var">orderRef</span> = <span class="kw">await</span> addDoc(collection(window.db, <span class="str">'orders'</span>), {
+    shopId,
+    shopName,
+    items:         cartItems,
+    total:         totalAmount,
+    customerPhone,
+    status:        <span class="str">'pending'</span>,
+    paymentStatus: <span class="str">'pending'</span>,
+    createdAt:     serverTimestamp()
+  });
+  <span class="kw">return</span> orderRef.id; <span class="cm">// use this as your order ID</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box success"><strong>Firestore data structure</strong>
+    <strong>shops/</strong> → {name, owner, phone, cat, area, approved, rating, createdAt}<br>
+    <strong>orders/</strong> → {shopId, shopName, items[], total, customerPhone, status, paymentStatus, createdAt}<br>
+    <strong>users/</strong> → {email, role: "shopkeeper"|"customer", shopId}
+  </div>
+</div>
+
+
+<!-- ───────────────────────── SECTION 2: LOGIN ───────────────────────── -->
+<div class="section-card">
+  <h2>🔐 Step 2 — Login System</h2>
+  <div class="subtitle">Firebase Authentication — customers and shopkeepers get their own accounts. Free, no server needed.</div>
+
+  <div class="grid-2">
+    <div class="mini-card">
+      <div class="icon">🛒</div>
+      <h5>Customer login</h5>
+      <p>Sign up with phone number or email. Can browse shops, place orders, track deliveries.</p>
+    </div>
+    <div class="mini-card">
+      <div class="icon">🏪</div>
+      <h5>Shopkeeper login</h5>
+      <p>Email login. Can manage their shop profile, add products, accept/reject orders.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-circle">1</div>
+    <div class="step-content">
+      <h4>Enable Authentication in Firebase</h4>
+      <p>Firebase Console → Authentication → "Get started" → Enable <em>Email/Password</em> and <em>Phone</em> providers.</p>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-circle">2</div>
+    <div class="step-content">
+      <h4>Add auth SDK and sign-up / login functions</h4>
+      <div class="code-block">
+        <div class="code-label">JavaScript</div>
+        <pre><span class="kw">import</span> { getAuth, createUserWithEmailAndPassword,
+         signInWithEmailAndPassword, signOut, onAuthStateChanged }
+  <span class="kw">from</span> <span class="str">"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"</span>;
+
+<span class="kw">const</span> <span class="var">auth</span> = getAuth(app);
+
+<span class="cm">// ── SIGN UP (new shopkeeper) ──────────────────────────────</span>
+<span class="kw">async function</span> <span class="fn">signUpShopkeeper</span>(email, password, shopData) {
+  <span class="kw">const</span> <span class="var">cred</span> = <span class="kw">await</span> createUserWithEmailAndPassword(auth, email, password);
+
+  <span class="cm">// Save user role to Firestore</span>
+  <span class="kw">await</span> setDoc(doc(window.db, <span class="str">'users'</span>, cred.user.uid), {
+    email,
+    role: <span class="str">'shopkeeper'</span>,
+    shopName: shopData.name,
+    phone:    shopData.phone,
+    createdAt: serverTimestamp()
+  });
+  <span class="kw">return</span> cred.user;
+}
+
+<span class="cm">// ── LOGIN ─────────────────────────────────────────────────</span>
+<span class="kw">async function</span> <span class="fn">login</span>(email, password) {
+  <span class="kw">const</span> <span class="var">cred</span> = <span class="kw">await</span> signInWithEmailAndPassword(auth, email, password);
+  <span class="kw">return</span> cred.user;
+}
+
+<span class="cm">// ── WATCH login state (runs on every page load) ───────────</span>
+onAuthStateChanged(auth, <span class="kw">async</span> (<span class="var">user</span>) =&gt; {
+  <span class="kw">if</span> (user) {
+    <span class="cm">// User is logged in — fetch their role</span>
+    <span class="kw">const</span> <span class="var">snap</span> = <span class="kw">await</span> getDoc(doc(window.db, <span class="str">'users'</span>, user.uid));
+    <span class="kw">const</span> <span class="var">role</span>  = snap.data()?.role;
+    <span class="kw">if</span> (role === <span class="str">'shopkeeper'</span>) showShopkeeperDashboard();
+    <span class="kw">else</span> showCustomerView();
+  } <span class="kw">else</span> {
+    showLoginScreen();
+  }
+});
+
+<span class="cm">// ── LOGOUT ───────────────────────────────────────────────</span>
+<span class="kw">async function</span> <span class="fn">logout</span>() {
+  <span class="kw">await</span> signOut(auth);
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-circle">3</div>
+    <div class="step-content">
+      <h4>Shopkeeper dashboard — manage own orders</h4>
+      <div class="code-block">
+        <div class="code-label">JavaScript — load orders for THIS shopkeeper only</div>
+        <pre><span class="kw">async function</span> <span class="fn">loadMyOrders</span>(shopId) {
+  <span class="kw">const</span> <span class="var">q</span> = query(
+    collection(window.db, <span class="str">'orders'</span>),
+    where(<span class="str">'shopId'</span>, <span class="str">'=='</span>, shopId),
+    orderBy(<span class="str">'createdAt'</span>, <span class="str">'desc'</span>)
+  );
+  <span class="kw">const</span> <span class="var">snap</span> = <span class="kw">await</span> getDocs(q);
+  <span class="kw">return</span> snap.docs.map(<span class="var">d</span> =&gt; ({ id: d.id, ...d.data() }));
+}
+
+<span class="cm">// Update order status (confirm / dispatch / deliver)</span>
+<span class="kw">async function</span> <span class="fn">updateOrderStatus</span>(orderId, newStatus) {
+  <span class="kw">await</span> updateDoc(doc(window.db, <span class="str">'orders'</span>, orderId), {
+    status: newStatus,
+    updatedAt: serverTimestamp()
+  });
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box tip"><strong>Security rules for Firestore</strong>
+    Go to Firestore → Rules tab → paste this to restrict data access properly:<br><br>
+    <code>match /orders/{id} { allow read: if request.auth.uid == resource.data.customerId || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'shopkeeper'; }</code>
+  </div>
+</div>
+
+
+<!-- ───────────────────────── SECTION 3: RAZORPAY ───────────────────────── -->
+<div class="section-card">
+  <h2>💳 Step 3 — Razorpay Payments</h2>
+  <div class="subtitle">Accept UPI, cards, net banking and wallets. Razorpay charges 2% per transaction. Free to register.</div>
+
+  <div class="flow">
+    <div class="flow-box">Customer taps "Pay"</div>
+    <div class="flow-arr">→</div>
+    <div class="flow-box highlight">Razorpay popup opens</div>
+    <div class="flow-arr">→</div>
+    <div class="flow-box">Customer pays via UPI/card</div>
+    <div class="flow-arr">→</div>
+    <div class="flow-box">Your site gets confirmation</div>
+    <div class="flow-arr">→</div>
+    <div class="flow-box">Order saved to Firebase</div>
+  </div>
+
+  <div class="step-block" style="margin-top:1.25rem;">
+    <div class="step-circle">1</div>
+    <div class="step-content">
+      <h4>Create Razorpay account</h4>
+      <p>Go to <a href="https://razorpay.com" target="_blank">razorpay.com</a> → Sign up → complete KYC (PAN + bank details) → get your <strong>Key ID</strong> from Settings → API Keys.</p>
+      <span class="tag tag-free">Free to register</span>
+      <span class="tag tag-paid">2% per transaction</span>
+      <span class="tag tag-required">KYC required for live</span>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-circle">2</div>
+    <div class="step-content">
+      <h4>Add Razorpay script to your HTML</h4>
+      <div class="code-block">
+        <div class="code-label">HTML — paste before &lt;/body&gt;</div>
+        <pre><span class="kw">&lt;script</span> <span class="var">src</span>=<span class="str">"https://checkout.razorpay.com/v1/checkout.js"</span><span class="kw">&gt;&lt;/script&gt;</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-circle">3</div>
+    <div class="step-content">
+      <h4>Open payment popup when customer clicks "Pay Now"</h4>
+      <div class="code-block">
+        <div class="code-label">JavaScript</div>
+        <pre><span class="kw">function</span> <span class="fn">openRazorpay</span>(orderData) {
+  <span class="kw">const</span> <span class="var">options</span> = {
+    key:         <span class="str">"rzp_test_YOUR_KEY_ID"</span>, <span class="cm">// from Razorpay dashboard</span>
+    amount:      orderData.total * <span class="num">100</span>,  <span class="cm">// Razorpay uses paise (₹1 = 100)</span>
+    currency:    <span class="str">"INR"</span>,
+    name:        <span class="str">"LocalMart"</span>,
+    description: <span class="str">"Order from "</span> + orderData.shopName,
+    image:       <span class="str">"https://yourdomain.com/logo.png"</span>,
+
+    <span class="cm">// Prefill customer info</span>
+    prefill: {
+      name:    orderData.customerName,
+      contact: orderData.customerPhone
+    },
+
+    theme: { color: <span class="str">"#d4622a"</span> },
+
+    <span class="cm">// ✅ Called when payment succeeds</span>
+    handler: <span class="kw">async function</span>(<span class="var">response</span>) {
+      <span class="kw">const</span> { razorpay_payment_id } = response;
+
+      <span class="cm">// Update order in Firebase as paid</span>
+      <span class="kw">await</span> updateDoc(doc(window.db, <span class="str">'orders'</span>, orderData.orderId), {
+        paymentStatus:  <span class="str">'paid'</span>,
+        paymentId:      razorpay_payment_id,
+        status:         <span class="str">'confirmed'</span>,
+        paidAt:         serverTimestamp()
+      });
+
+      <span class="cm">// Send WhatsApp alert to shopkeeper</span>
+      sendWhatsAppAlert(orderData);
+
+      alert(<span class="str">'✅ Payment successful! Order #'</span> + orderData.orderId);
+    },
+
+    modal: {
+      ondismiss: () =&gt; alert(<span class="str">'Payment cancelled.'</span>)
+    }
+  };
+
+  <span class="kw">const</span> <span class="var">rzp</span> = <span class="kw">new</span> Razorpay(options);
+  rzp.open();
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-block">
+    <div class="step-circle">4</div>
+    <div class="step-content">
+      <h4>Connect to your "Place Order" button</h4>
+      <div class="code-block">
+        <div class="code-label">JavaScript — updated placeOrder flow</div>
+        <pre><span class="kw">async function</span> <span class="fn">placeOrder</span>() {
+  <span class="kw">const</span> <span class="var">cartItems</span> = Object.values(cart);
+  <span class="kw">const</span> <span class="var">total</span>     = cartItems.reduce((<span class="var">a</span>, <span class="var">x</span>) =&gt; a + x.price * x.qty, <span class="num">0</span>);
+
+  <span class="cm">// 1. Save order to Firebase (status: pending)</span>
+  <span class="kw">const</span> <span class="var">orderId</span> = <span class="kw">await</span> saveOrderToFirebase({
+    shopId:   currentShop.id,
+    shopName: currentShop.name,
+    items:    cartItems,
+    total
+  });
+
+  <span class="cm">// 2. Open Razorpay for payment</span>
+  openRazorpay({
+    orderId,
+    shopName:      currentShop.name,
+    shopPhone:     currentShop.phone,
+    customerName:  loggedInUser.name,
+    customerPhone: loggedInUser.phone,
+    total
+  });
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box warn"><strong>Test vs Live mode</strong>
+    Use <code>rzp_test_</code> key while testing — payments won't be real. Switch to <code>rzp_live_</code> key after KYC approval to accept real money. Test card: <strong>4111 1111 1111 1111</strong>, any future date, any CVV.
+  </div>
+</div>
+
+
+<!-- ───────────────────────── SECTION 4: WHATSAPP ───────────────────────── -->
+<div class="section-card">
+  <h2>📲 Step 4 — WhatsApp Order Alerts</h2>
+  <div class="subtitle">Instantly notify shopkeepers on WhatsApp when a new order arrives. Two options below.</div>
+
+  <div class="grid-2">
+    <div class="mini-card">
+      <div class="icon">⚡</div>
+      <h5>Option A — Simple link (free)</h5>
+      <p>Opens WhatsApp on customer's phone pre-filled with order message. No API needed. Works immediately.</p>
+      <span class="tag tag-free">Free</span>
+      <span class="tag tag-optional">Manual send</span>
+    </div>
+    <div class="mini-card">
+      <div class="icon">🤖</div>
+      <h5>Option B — Auto message (paid)</h5>
+      <p>Uses Twilio or WATI API. Sends message automatically after payment. No customer action needed.</p>
+      <span class="tag tag-paid">~₹2–5 per message</span>
+      <span class="tag tag-optional">Fully automatic</span>
+    </div>
+  </div>
+
+  <h4 style="margin:1.25rem 0 0.75rem;font-size:0.95rem;font-weight:500;">Option A — WhatsApp deep link (works right now, free)</h4>
+  <div class="code-block">
+    <div class="code-label">JavaScript</div>
+    <pre><span class="kw">function</span> <span class="fn">sendWhatsAppAlert</span>(orderData) {
+  <span class="kw">const</span> <span class="var">shopPhone</span> = orderData.shopPhone.replace(/\D/g, <span class="str">''</span>); <span class="cm">// digits only</span>
+
+  <span class="kw">const</span> <span class="var">itemsList</span> = orderData.items
+    .map(<span class="var">i</span> =&gt; <span class="str">`• ${i.name} ×${i.qty} = ₹${i.price * i.qty}`</span>)
+    .join(<span class="str">'\n'</span>);
+
+  <span class="kw">const</span> <span class="var">message</span> = <span class="str">`
+🛒 *NEW ORDER — LocalMart*
+Order ID: #${orderData.orderId}
+Customer: ${orderData.customerName}
+Phone: ${orderData.customerPhone}
+
+*Items:*
+${itemsList}
+
+*Total: ₹${orderData.total}*
+Payment: ✅ Paid via Razorpay
+
+Please confirm the order!
+`</span>;
+
+  <span class="kw">const</span> <span class="var">url</span> = <span class="str">`https://wa.me/91${shopPhone}?text=`</span>
+            + encodeURIComponent(message);
+
+  window.open(url, <span class="str">'_blank'</span>); <span class="cm">// opens WhatsApp</span>
+}</pre>
+  </div>
+
+  <h4 style="margin:1.5rem 0 0.75rem;font-size:0.95rem;font-weight:500;">Option B — Automatic via Twilio API (₹2–5 per message)</h4>
+  <div class="step-block">
+    <div class="step-circle">1</div>
+    <div class="step-content">
+      <h4>Setup</h4>
+      <p>Create account at <a href="https://www.twilio.com" target="_blank">twilio.com</a> → activate WhatsApp Sandbox → get Account SID and Auth Token.</p>
+    </div>
+  </div>
+  <div class="step-block">
+    <div class="step-circle">2</div>
+    <div class="step-content">
+      <h4>Send via a small backend (Node.js on Vercel — free)</h4>
+      <div class="code-block">
+        <div class="code-label">api/notify.js — Vercel serverless function</div>
+        <pre><span class="kw">const</span> twilio = require(<span class="str">'twilio'</span>);
+
+<span class="kw">const</span> <span class="var">client</span> = twilio(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN
+);
+
+<span class="kw">module.exports</span> = <span class="kw">async</span> (<span class="var">req</span>, <span class="var">res</span>) =&gt; {
+  <span class="kw">const</span> { shopPhone, message } = req.body;
+
+  <span class="kw">await</span> client.messages.create({
+    from: <span class="str">'whatsapp:+14155238886'</span>, <span class="cm">// Twilio sandbox number</span>
+    to:   <span class="str">`whatsapp:+91${shopPhone}`</span>,
+    body: message
+  });
+
+  res.json({ success: <span class="kw">true</span> });
+};</pre>
+      </div>
+    </div>
+  </div>
+  <div class="step-block">
+    <div class="step-circle">3</div>
+    <div class="step-content">
+      <h4>Call this API from your website after payment succeeds</h4>
+      <div class="code-block">
+        <div class="code-label">JavaScript — inside Razorpay handler</div>
+        <pre><span class="kw">await</span> fetch(<span class="str">'/api/notify'</span>, {
+  method:  <span class="str">'POST'</span>,
+  headers: { <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span> },
+  body: JSON.stringify({
+    shopPhone: currentShop.phone,
+    message:   <span class="str">`New order ₹${total} from ${customerName}. Order ID: ${orderId}`</span>
+  })
+});</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ───────────────────────── SECTION 5: DEPLOY ───────────────────────── -->
+<div class="section-card">
+  <h2>🚀 Step 5 — Go Live (Free Hosting)</h2>
+  <div class="subtitle">Deploy your website for free in under 5 minutes using Vercel.</div>
+
+  <div class="step-block">
+    <div class="step-circle">1</div>
+    <div class="step-content">
+      <h4>Put your files on GitHub</h4>
+      <p>Create a free account at <a href="https://github.com" target="_blank">github.com</a> → New repository → Upload your HTML file.</p>
+    </div>
+  </div>
+  <div class="step-block">
+    <div class="step-circle">2</div>
+    <div class="step-content">
+      <h4>Deploy to Vercel</h4>
+      <p>Go to <a href="https://vercel.com" target="_blank">vercel.com</a> → Import your GitHub repo → click Deploy. Your site will be live at <code>yourproject.vercel.app</code> in 60 seconds.</p>
+      <span class="tag tag-free">Free tier</span>
+      <span class="tag tag-optional">Custom domain ₹800/yr</span>
+    </div>
+  </div>
+  <div class="step-block">
+    <div class="step-circle">3</div>
+    <div class="step-content">
+      <h4>Add environment variables</h4>
+      <p>In Vercel → Settings → Environment Variables → add your Twilio keys so they stay private:</p>
+      <div class="code-block">
+        <div class="code-label">Vercel env vars</div>
+        <pre>TWILIO_ACCOUNT_SID = ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+TWILIO_AUTH_TOKEN  = your_auth_token_here</pre>
+      </div>
+    </div>
+  </div>
+
+  <h4 style="font-size:0.95rem;font-weight:500;margin:1.5rem 0 0.75rem;">Monthly cost estimate</h4>
+  <table>
+    <tr><th>Service</th><th>Free Tier</th><th>If you grow</th></tr>
+    <tr><td>Firebase (database + auth)</td><td>Free up to 50K reads/day</td><td>~₹500/mo</td></tr>
+    <tr><td>Vercel (hosting)</td><td>Free</td><td>~₹1,500/mo (Pro)</td></tr>
+    <tr><td>Razorpay</td><td>Free to register</td><td>2% per order</td></tr>
+    <tr><td>Twilio WhatsApp</td><td>Free sandbox (testing)</td><td>~₹3–5 per alert</td></tr>
+    <tr><td>Domain name</td><td>—</td><td>~₹800/yr</td></tr>
+  </table>
+
+  <div class="info-box success"><strong>Recommended launch order</strong>
+    Week 1: Firebase + basic login → Week 2: Go live on Vercel with 5 test shops → Week 3: Add Razorpay → Week 4: Add WhatsApp alerts → Onboard real shopkeepers!
+  </div>
+</div>
+
+</main>
+
+<footer>
+  LocalMart Implementation Guide · Built for your hyperlocal marketplace project · All code is copy-paste ready
+</footer>
+
+</body>
+</html>
