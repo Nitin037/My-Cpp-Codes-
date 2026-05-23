@@ -205,11 +205,12 @@ using namespace std;
 //     return 0 ; 
 // }
 
-int main(){
-    int n = 8;
-    for(int i=1;i<=10;i++){
-        cout<<" "<<(n*i)<<endl ;
-    }
-    // cout<<endl;
-    return 0;
-}
+// int main(){
+//     int n = 8;
+//     for(int i=1;i<=10;i++){
+//         cout<<" "<<(n*i)<<endl ;
+//     }
+//     // cout<<endl;
+//     return 0;
+// }
+
