@@ -73,22 +73,61 @@ using namespace std;
 //         return 0 ; 
 // }
 
-int main(){
-    int n ; 
-    cout<<"enter a three digit number : ";
-    cin>>n; 
-    int num = n ;
-    int dig1 = num%10;
-    num = num/10;
-    int dig2 = num%10;
-    num = num/10;
-    int dig3 =  num; 
+// int main(){
+//     int n ; 
+//     cout<<"enter a three digit number : ";
+//     cin>>n; 
+//     int num = n ;
+//     int dig1 = num%10;
+//     num = num/10;
+//     int dig2 = num%10;
+//     num = num/10;
+//     int dig3 =  num; 
 
-    int cubesum = (dig1*dig1*dig1) + (dig2*dig2*dig2) + (dig3*dig3*dig3);
-    if(cubesum == n){
-        cout<<n<<" is an armstrong number\n";
-    } else{
-        cout<<n<<" is not an armstong number \n";
+//     int cubesum = (dig1*dig1*dig1) + (dig2*dig2*dig2) + (dig3*dig3*dig3);
+//     if(cubesum == n){
+//         cout<<n<<" is an armstrong number\n";
+//     } else{
+//         cout<<n<<" is not an armstong number \n";
+//     }
+//     return 0 ; 
+// }
+
+
+// int main(){
+//     int n ; 
+//     cout<<"enter the number : ";
+//     cin>>n;
+//     int sum = 0 ; 
+//     for(int i = 0;i<=n;i++){
+//         sum = sum + i ;
+//     }
+//     cout<<sum<<endl;
+//     return 0 ;
+// }
+
+// int main(){
+//     int n = 10342;
+//     int digsum = 0;
+//     while(n>0){
+//         int lastdig = n%10;
+//         digsum += lastdig;
+//         n = n/10;
+//     }
+//     cout<<"sum = "<<digsum<<endl; 
+//     return 0 ;
+// }
+
+int main(){
+    int n = 12345;
+    int digsum = 0; 
+    while(n>0){
+        int lastdig = n%10;
+        if(lastdig % 2!= 0){
+            digsum += lastdig;
+        }
+        n = n/10;
     }
-    return 0 ; 
+    cout<<"sum = "<<digsum<<endl;
+    return 0 ;
 }
